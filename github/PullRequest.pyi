@@ -43,7 +43,8 @@ class PullRequest:
     @property
     def commits_url(self) -> str: ...
     def create_comment(
-        self, body: str, commit_id: Commit, path: str, position: int
+        self, body: str, commit_id: Commit, path: str, position: Optional[int],
+        side: Optional[str], line: Optional[int]
     ) -> PullRequestComment: ...
     def create_issue_comment(self, body: str) -> IssueComment: ...
     def create_review(
@@ -54,7 +55,8 @@ class PullRequest:
         comments: Union[_NotSetType, str] = ...,
     ) -> PullRequestReview: ...
     def create_review_comment(
-        self, body: str, commit_id: Commit, path: str, position: int
+        self, body: str, commit_id: Commit, path: str, position: Optional[int],
+        side: Optional[str], line: Optional[int]
     ) -> PullRequestComment: ...
     def create_review_request(
         self,

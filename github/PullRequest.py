@@ -373,36 +373,46 @@ class PullRequest(github.GithubObject.CompletableGithubObject):
         headers, data = self._requester.requestJsonAndCheck("GET", self.issue_url)
         return github.Issue.Issue(self._requester, headers, data, completed=True)
 
-    def create_comment(self, body, commit_id, path, position):
+    def create_comment(self, body, commit_id, path, position, side, line):
         """
         :calls: `POST /repos/:owner/:repo/pulls/:number/comments <http://developer.github.com/v3/pulls/comments>`_
         :param body: string
         :param commit_id: :class:`github.Commit.Commit`
         :param path: string
         :param position: integer
+        :param side: string
+        :param line: integer
         :rtype: :class:`github.PullRequestComment.PullRequestComment`
         """
-        return self.create_review_comment(body, commit_id, path, position)
+        return self.create_review_comment(body, commit_id, path, position, side, line)
 
-    def create_review_comment(self, body, commit_id, path, position):
+    def create_review_comment(self, body, commit_id, path, position, side, line):
         """
         :calls: `POST /repos/:owner/:repo/pulls/:number/comments <http://developer.github.com/v3/pulls/comments>`_
         :param body: string
         :param commit_id: :class:`github.Commit.Commit`
         :param path: string
         :param position: integer
+        :param side: string
+        :param line: integer
         :rtype: :class:`github.PullRequestComment.PullRequestComment`
         """
         assert isinstance(body, str), body
         assert isinstance(commit_id, github.Commit.Commit), commit_id
         assert isinstance(path, str), path
-        assert isinstance(position, int), position
         post_parameters = {
             "body": body,
             "commit_id": commit_id._identity,
             "path": path,
-            "position": position,
         }
+        if position:
+            assert isinstance(position, int), position
+            post_parameters['position'] = position
+        else:
+            assert isinstance(line, int), line
+            assert isinstance(side, str), side
+            post_parameters['side'] = side
+            post_parameters['line'] = line
         headers, data = self._requester.requestJsonAndCheck(
             "POST", self.url + "/comments", input=post_parameters
         )
